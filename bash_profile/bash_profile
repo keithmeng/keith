@@ -1,0 +1,298 @@
+export WORKON_HOME=$HOME/.virtualenvs
+export PROJECT_HOME=$HOME/Devel
+source /usr/local/bin/virtualenvwrapper.sh
+
+atlasenv() {
+source /Users/keng/.virtualenvs/atlas-dev/bin/activate
+export ANSIBLE_VAULT_PASSWORD=$(gpg -d /Users/keng/.ansible/ansible_pwd.gpg)
+export VIRTUALENV=$(echo $VIRTUAL_ENV | sed 's:.*/::')
+PS1='\e[0;91m*** \e[0;91mDEIS=\e[0;93m$DEIS_PROFILE \e[0;91mAWS=\e[0;93m$AWS\e[0;91m***\e[m \e[0,92m($VIRTUALENV)\e[m
+$PWD> '
+}
+
+devopstoolsenv() {
+source /Users/keng/.virtualenvs/devops_tools/bin/activate
+export VIRTUALENV=$(echo $VIRTUAL_ENV | sed 's:.*/::')
+PS1='\e[0;91m*** \e[0;91mDEIS=\e[0;93m$DEIS_PROFILE \e[0;91mAWS=\e[0;93m$AWS\e[0;91m***\e[m \e[0,92m($VIRTUALENV)\e[m
+$PWD> '
+}
+
+essexenv() {
+source /Users/keng/.virtualenvs/essex-dev/bin/activate
+export VIRTUALENV=$(echo $VIRTUAL_ENV | sed 's:.*/::')
+PS1='\e[0;91m***\e[0;91mAWS=\e[0;93m$AWS\e[0;91m***\e[m \e[0,92m($VIRTUALENV)\e[m
+$PWD> '
+}
+
+PS1='\e[0;91m*** \e[0;91mDEIS=\e[0;93m$DEIS_PROFILE \e[0;91mAWS=\e[0;93m$AWS\e[0;91m***\e[m
+$PWD> '
+
+complete -C '/usr/local/bin/aws_completer' aws
+
+
+alias composer="php /usr/local/bin/composer.phar"
+alias git=hub
+alias kc-sys='kubectl --namespace=kube-system'
+
+set_aws() {
+    pwd=$(gpg -d ~/.aws/${1}.gpg)
+    export AWS_ACCESS_KEY_ID=$(echo $pwd | awk '{print $1}') 
+    export AWS_SECRET_ACCESS_KEY=$(echo $pwd | awk '{print $2}') 
+    export AWS=${1}
+    #export AWS_PROFILE=${1}
+}
+
+dc() {
+    options=(
+    "ctfeature2-one"
+    "ctstage-one"
+    "ctprod-one"
+    "htvqa2-one"
+    "htvstage-one"
+    "htvprod-two"
+    "stage-one"
+    "prod-one"
+    "htvfeature-one"
+    "htvload-one"
+    "stage-two"
+    "feature-one"
+    "htvload-one"
+)
+
+echo "Choose DEIS profile"
+PS3="Input number for selection: "
+WARNING="\033[92m Setting the associated AWS Profile\033[m"
+select opt in "${options[@]}" "Abort"; do
+
+    case "$REPLY" in
+    1 ) if [[ $AWS != ctgdev ]]; then 
+            echo -e $WARNING
+            set_aws ctgdev
+            export DEIS_PROFILE=${options[0]}
+            echo -e "\033[92m SSHKey: test-deis.pem"
+        else 
+            export DEIS_PROFILE=${options[0]} 
+            echo -e "\033[92m SSHKey: test-deis.pem"
+        fi; break;;
+    2 ) if [[ $AWS != ctgmediaosprod ]]; then 
+            echo -e $WARNING
+            set_aws ctgmediaosprod
+            export DEIS_PROFILE=${options[1]}
+            echo -e "\033[92m SSHKey: ctstage-deis.pem"
+        else 
+            export DEIS_PROFILE=${options[1]} 
+            echo -e "\033[92m SSHKey: ctstage-deis.pem"
+        fi; break;;
+    3 ) if [[ $AWS != ctgmediaosprod ]]; then 
+            echo -e $WARNING
+            set_aws ctgmediaosprod
+            export DEIS_PROFILE=${options[2]}
+            echo -e "\033[92m SSHKey: ctprod-deis.pem"
+        else 
+            export DEIS_PROFILE=${options[2]} 
+            echo -e "\033[92m SSHKey: ctprod-deis.pem"
+        fi; break;;
+    4 ) if [[ $AWS != htvdev ]]; then 
+            echo -e $WARNING
+            set_aws htvdev
+            export DEIS_PROFILE=${options[3]}
+            echo -e "\033[92m SSHKey: hearstdev.pem"
+        else 
+            export DEIS_PROFILE=${options[3]}
+            echo -e "\033[92m SSHKey: hearstdev.pem"
+        fi; break;;
+    5 ) if [[ $AWS != htvmediaosprod ]]; then 
+            echo -e $WARNING
+            set_aws htvmediaosprod
+            export DEIS_PROFILE=${options[4]}
+            echo -e "\033[92m SSHKey: htvstage-deis.pem"
+        else 
+            export DEIS_PROFILE=${options[4]}
+            echo -e "\033[92m SSHKey: htvstage-deis.pem"
+        fi; break;;
+    6 ) if [[ $AWS != htvmediaosprod ]]; then 
+            echo -e $WARNING
+            set_aws htvmediaosprod
+            export DEIS_PROFILE=${options[5]}
+            echo -e "\033[92m SSHKey: htvprod-deis.pem"
+        else 
+            export DEIS_PROFILE=${options[5]}
+            echo -e "\033[92m SSHKey: htvprod-deis.pem"
+        fi; break;;
+    7 ) if [[ $AWS != mediaosdevstage ]]; then 
+            echo -e $WARNING
+            set_aws mediaosdevstage
+            export DEIS_PROFILE=${options[6]}
+            echo -e "\033[92m SSHKey: stage-deis-20160603.pem"
+        else 
+            export DEIS_PROFILE=${options[6]}
+            echo -e "\033[92m SSHKey: stage-deis-20160603.pem"
+        fi; break;;
+    8 ) if [[ $AWS != hdm2prod ]]; then 
+            echo -e $WARNING
+            set_aws hdm2prod
+            export DEIS_PROFILE=${options[7]}
+            echo -e "\033[92m SSHKey: prod-deis-20160603.pem"
+        else 
+            export DEIS_PROFILE=${options[7]}
+            echo -e "\033[92m SSHKey: prod-deis-20160603.pem"
+        fi; break;;
+    9 ) if [[ $AWS != htvdev ]]; then
+            echo -e $WARNING
+            set_aws htvdev
+            export DEIS_PROFILE=${options[8]}
+            echo -e "\033[92m SSHKey: htvfeature-deis.pem"
+        else
+            export DEIS_PROFILE=${options[8]}
+            echo -e "\033[92m SSHKey: htvfeature-deis.pem"
+        fi; break;;
+
+     10 ) if [[ $AWS != htvmediaosprod ]]; then
+            echo -e $WARNING
+            set_aws htvmediaosprod
+            export DEIS_PROFILE=${options[9]}
+            echo -e "\033[92m SSHKey: htvload-deis.pem"
+        else
+            export DEIS_PROFILE=${options[9]}
+            echo -e "\033[92m SSHKey: htvload-deis.pem"
+        fi; break;;
+
+     11 ) if [[ $AWS != mediaosdevstage ]]; then
+            echo -e $WARNING
+            set_aws mediaosdevstage
+            export DEIS_PROFILE=${options[10]}
+            echo -e "\033[92m SSHKey: loadtest-deis-20160603.pem"
+        else
+            export DEIS_PROFILE=${options[10]}
+            echo -e "\033[92m SSHKey: loadtest-deis-20160603.pem"
+        fi; break;;
+
+     12 ) if [[ $AWS != mediaosdevstage ]]; then
+            echo -e $WARNING
+            set_aws mediaosdevstage
+            export DEIS_PROFILE=${options[11]}
+            echo -e "\033[92m SSHKey: feature-deis-20160603.pem"
+        else
+            export DEIS_PROFILE=${options[11]}
+            echo -e "\033[92m SSHKey: feature-deis-20160603.pem"
+        fi; break;;
+        
+     13 ) if [[ $AWS != htvmediaosprod ]]; then
+             echo -e $WARNING
+             set_aws htvmediaosprod
+             export DEIS_PROFILE=${options[12]}
+             echo -e "\033[92m SSHKey: htvload-deis.pem"
+         else
+             export DEIS_PROFILE=${options[12]}
+             echo -e "\033[92m SSHKey: htvload-deis.pem"
+         fi; break;;
+
+    $(( ${#options[@]}+1 )) ) echo "Aborted!"; break;;
+    *) echo "Invalid option. Try another one.";continue;;
+
+    esac
+
+done
+}
+
+dp () {
+   deis whoami
+}
+
+export FLEETCTL_TUNNEL=localhost:5532
+export FLEETCTL_STRICT_HOST_KEY_CHECKING=false
+
+
+awscreds() {
+    options=(
+    "ctgdev"
+    "ctgmediaosprod"
+    "htvdev"
+    "htvmediaosprod"
+    "mediaosdevstage"
+    "hdm2prod"
+)
+
+echo "Choose AWS profile"
+PS3="Input number for selection: "
+select opt in "${options[@]}" "Abort"; do
+
+    case "$REPLY" in
+    1 ) set_aws ${options[0]}; break;;
+    2 ) set_aws ${options[1]}; break;;
+    3 ) set_aws ${options[2]}; break;;
+    4 ) set_aws ${options[3]}; break;;
+    5 ) set_aws ${options[4]}; break;;
+    6 ) set_aws ${options[5]}; break;;
+   
+    $(( ${#options[@]}+1 )) ) echo "Aborted!"; break;;
+    *) echo "Invalid option. Try another one.";continue;;
+
+    esac
+
+done
+}
+
+testaws() {
+    aws cloudformation list-stacks --query StackSummaries[].[StackName] --output text
+}
+
+refreshaws() {
+    ~/code/atlas/provisioning/inventory/ec2.py --refresh-cache
+}
+
+destroy_exited() {
+    docker rm -v $(docker ps -a -q -f "status=exited")
+}
+
+
+avv() {
+    ansible-vault view --vault-password-file=provisioning/library/get_password.py $1
+}
+
+ave() {
+    ansible-vault edit --vault-password-file=provisioning/library/get_password.py $1
+}
+
+set_vault() {
+    pwd=$(gpg -d ~/vault.gpg)
+    export VAULT_ADDR=https://vault.hearstapps.com
+    export VAULT_USERNAME=$(echo $pwd | awk '{print $1}')
+    export VAULT_PASSWORD=$(echo $pwd | awk '{print $2}')
+    vault auth -method=userpass username=${VAULT_USERNAME} password=${VAULT_PASSWORD}
+    }
+
+vault_login() {
+    token=$(gpg -d ~/github_token.gpg)
+    export VAULT_ADDR=https://vault.hearstapps.com
+    vault auth -method=github token=${token}
+    }
+
+nse() {
+    docker exec -it $1 bash
+    }
+
+listdns() {
+    aws route53 list-hosted-zones
+}
+
+listec2() {
+    aws ec2 describe-instances --filter "Name=tag-value,Values=$1" --query "Reservations[].Instances[].[InstanceId,PrivateIpAddress,Tags[?Key=='Name'].Value[]]"
+}
+
+rssh() {
+    ip=$(aws ec2 describe-instances --filter "Name=instance-id,Values=$1" --query "Reservations[].Instances[].[PrivateIpAddress]" --output text)
+    ssh ubuntu@$ip
+}
+
+listunits() {
+    fleetctl list-units | grep $1 | awk '{print $2}' | sort | uniq -c
+}
+
+redistunnel() {
+    if [[ ! -z $3 ]]; then
+    ssh -F $3 -L 6379:$1:6379 core@$2
+    else
+    ssh -L 6379:$1:6379 core@$2
+    fi
+}
