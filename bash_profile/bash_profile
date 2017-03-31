@@ -1,24 +1,25 @@
 export WORKON_HOME=$HOME/.virtualenvs
 export PROJECT_HOME=$HOME/Devel
 source /usr/local/bin/virtualenvwrapper.sh
+export whoami=$(whoami)
 
 atlasenv() {
-source /Users/keng/.virtualenvs/atlas-dev/bin/activate
-export ANSIBLE_VAULT_PASSWORD=$(gpg -d /Users/keng/.ansible/ansible_pwd.gpg)
+source /Users/$whoami/.virtualenvs/atlas-dev/bin/activate
+export ANSIBLE_VAULT_PASSWORD=$(gpg -d /Users/$whoami/.ansible/ansible_pwd.gpg)
 export VIRTUALENV=$(echo $VIRTUAL_ENV | sed 's:.*/::')
 PS1='\e[0;91m*** \e[0;91mDEIS=\e[0;93m$DEIS_PROFILE \e[0;91mAWS=\e[0;93m$AWS\e[0;91m***\e[m \e[0,92m($VIRTUALENV)\e[m
 $PWD> '
 }
 
 devopstoolsenv() {
-source /Users/keng/.virtualenvs/devops_tools/bin/activate
+source /Users/$whoami/.virtualenvs/devops_tools/bin/activate
 export VIRTUALENV=$(echo $VIRTUAL_ENV | sed 's:.*/::')
 PS1='\e[0;91m*** \e[0;91mDEIS=\e[0;93m$DEIS_PROFILE \e[0;91mAWS=\e[0;93m$AWS\e[0;91m***\e[m \e[0,92m($VIRTUALENV)\e[m
 $PWD> '
 }
 
 essexenv() {
-source /Users/keng/.virtualenvs/essex-dev/bin/activate
+source /Users/$whoami/.virtualenvs/essex-dev/bin/activate
 export VIRTUALENV=$(echo $VIRTUAL_ENV | sed 's:.*/::')
 PS1='\e[0;91m***\e[0;91mAWS=\e[0;93m$AWS\e[0;91m***\e[m \e[0,92m($VIRTUALENV)\e[m
 $PWD> '
