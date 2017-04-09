@@ -71,81 +71,99 @@ select opt in "${options[@]}" "Abort"; do
             set_aws ctgdev
             export DEIS_PROFILE=${options[0]}
             echo -e "\033[92m SSHKey: test-deis.pem"
+            osascript ~/tbg.scpt default
         else 
             export DEIS_PROFILE=${options[0]} 
             echo -e "\033[92m SSHKey: test-deis.pem"
+            osascript ~/tbg.scpt default
         fi; break;;
     2 ) if [[ $AWS != ctgmediaosprod ]]; then 
             echo -e $WARNING
             set_aws ctgmediaosprod
             export DEIS_PROFILE=${options[1]}
             echo -e "\033[92m SSHKey: ctstage-deis.pem"
+            osascript ~/tbg.scpt staging
         else 
             export DEIS_PROFILE=${options[1]} 
             echo -e "\033[92m SSHKey: ctstage-deis.pem"
+            osascript ~/tbg.scpt staging
         fi; break;;
     3 ) if [[ $AWS != ctgmediaosprod ]]; then 
             echo -e $WARNING
             set_aws ctgmediaosprod
             export DEIS_PROFILE=${options[2]}
             echo -e "\033[92m SSHKey: ctprod-deis.pem"
+            osascript ~/tbg.scpt production
         else 
             export DEIS_PROFILE=${options[2]} 
             echo -e "\033[92m SSHKey: ctprod-deis.pem"
+            osascript ~/tbg.scpt production
         fi; break;;
     4 ) if [[ $AWS != htvdev ]]; then 
             echo -e $WARNING
             set_aws htvdev
             export DEIS_PROFILE=${options[3]}
             echo -e "\033[92m SSHKey: hearstdev.pem"
+            osascript ~/tbg.scpt default
         else 
             export DEIS_PROFILE=${options[3]}
             echo -e "\033[92m SSHKey: hearstdev.pem"
+            osascript ~/tbg.scpt default
         fi; break;;
     5 ) if [[ $AWS != htvmediaosprod ]]; then 
             echo -e $WARNING
             set_aws htvmediaosprod
             export DEIS_PROFILE=${options[4]}
             echo -e "\033[92m SSHKey: htvstage-deis.pem"
+            osascript ~/tbg.scpt staging
         else 
             export DEIS_PROFILE=${options[4]}
             echo -e "\033[92m SSHKey: htvstage-deis.pem"
+            osascript ~/tbg.scpt staging
         fi; break;;
     6 ) if [[ $AWS != htvmediaosprod ]]; then 
             echo -e $WARNING
             set_aws htvmediaosprod
             export DEIS_PROFILE=${options[5]}
             echo -e "\033[92m SSHKey: htvprod-deis.pem"
+            osascript ~/tbg.scpt production
         else 
             export DEIS_PROFILE=${options[5]}
             echo -e "\033[92m SSHKey: htvprod-deis.pem"
+            osascript ~/tbg.scpt production
         fi; break;;
     7 ) if [[ $AWS != mediaosdevstage ]]; then 
             echo -e $WARNING
             set_aws mediaosdevstage
             export DEIS_PROFILE=${options[6]}
             echo -e "\033[92m SSHKey: stage-deis-20160603.pem"
+            osascript ~/tbg.scpt staging
         else 
             export DEIS_PROFILE=${options[6]}
             echo -e "\033[92m SSHKey: stage-deis-20160603.pem"
+            osascript ~/tbg.scpt staging
         fi; break;;
     8 ) if [[ $AWS != hdm2prod ]]; then 
             echo -e $WARNING
             set_aws hdm2prod
             export DEIS_PROFILE=${options[7]}
             echo -e "\033[92m SSHKey: prod-deis-20160603.pem"
+            osascript ~/tbg.scpt production
         else 
             export DEIS_PROFILE=${options[7]}
             echo -e "\033[92m SSHKey: prod-deis-20160603.pem"
+            osascript ~/tbg.scpt production
         fi; break;;
     9 ) if [[ $AWS != htvdev ]]; then
             echo -e $WARNING
             set_aws htvdev
             export DEIS_PROFILE=${options[8]}
             echo -e "\033[92m SSHKey: htvfeature-deis.pem"
+            osascript ~/tbg.scpt default
         else
             export DEIS_PROFILE=${options[8]}
             echo -e "\033[92m SSHKey: htvfeature-deis.pem"
+            osascript ~/tbg.scpt default
         fi; break;;
 
      10 ) if [[ $AWS != htvmediaosprod ]]; then
@@ -153,9 +171,11 @@ select opt in "${options[@]}" "Abort"; do
             set_aws htvmediaosprod
             export DEIS_PROFILE=${options[9]}
             echo -e "\033[92m SSHKey: htvload-deis.pem"
+            osascript ~/tbg.scpt staging
         else
             export DEIS_PROFILE=${options[9]}
             echo -e "\033[92m SSHKey: htvload-deis.pem"
+            osascript ~/tbg.scpt staging
         fi; break;;
 
      11 ) if [[ $AWS != mediaosdevstage ]]; then
@@ -163,9 +183,11 @@ select opt in "${options[@]}" "Abort"; do
             set_aws mediaosdevstage
             export DEIS_PROFILE=${options[10]}
             echo -e "\033[92m SSHKey: loadtest-deis-20160603.pem"
+            osascript ~/tbg.scpt staging
         else
             export DEIS_PROFILE=${options[10]}
             echo -e "\033[92m SSHKey: loadtest-deis-20160603.pem"
+            osascript ~/tbg.scpt staging
         fi; break;;
 
      12 ) if [[ $AWS != mediaosdevstage ]]; then
@@ -173,9 +195,11 @@ select opt in "${options[@]}" "Abort"; do
             set_aws mediaosdevstage
             export DEIS_PROFILE=${options[11]}
             echo -e "\033[92m SSHKey: feature-deis-20160603.pem"
+            osascript ~/tbg.scpt default
         else
             export DEIS_PROFILE=${options[11]}
             echo -e "\033[92m SSHKey: feature-deis-20160603.pem"
+            osascript ~/tbg.scpt default
         fi; break;;
         
      13 ) if [[ $AWS != htvmediaosprod ]]; then
@@ -183,9 +207,11 @@ select opt in "${options[@]}" "Abort"; do
              set_aws htvmediaosprod
              export DEIS_PROFILE=${options[12]}
              echo -e "\033[92m SSHKey: htvload-deis.pem"
+            osascript ~/tbg.scpt staging
          else
              export DEIS_PROFILE=${options[12]}
              echo -e "\033[92m SSHKey: htvload-deis.pem"
+            osascript ~/tbg.scpt staging
          fi; break;;
 
     $(( ${#options[@]}+1 )) ) echo "Aborted!"; break;;
@@ -268,6 +294,11 @@ vault_login() {
     export VAULT_ADDR=https://vault.hearstapps.com
     vault auth -method=github token=${token}
     }
+
+gtoken() {
+    export GITHUB_USER='keithmeng'
+    export GITHUB_TOKEN=$(gpg -d ~/github_token.gpg)
+   } 
 
 nse() {
     docker exec -it $1 bash
