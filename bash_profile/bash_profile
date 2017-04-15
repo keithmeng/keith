@@ -314,7 +314,14 @@ listec2() {
 
 rssh() {
     ip=$(aws ec2 describe-instances --filter "Name=instance-id,Values=$1" --query "Reservations[].Instances[].[PrivateIpAddress]" --output text)
-    ssh ubuntu@$ip
+    tag=$(aws ec2 describe-instances --filter "Name=instance-id,Values=$1" --query "Reservations[].Instances[].[Tags[?Key=='Name'].Value[]]" --output text)
+    if [[ $tag == dev* ]]; then
+    ssh -F ~/.ssh/dev-rover-config $ip
+    elif [[ $tag == stage* ]]; then
+    ssh -F ~/.ssh/stage-rover-config $ip
+    elif [[ $tag == prod* ]]; then
+    ssh -F ~/.ssh/prod-rover-config $ip
+   fi
 }
 
 listunits() {
