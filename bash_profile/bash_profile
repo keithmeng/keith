@@ -335,3 +335,15 @@ redistunnel() {
     ssh -L 6379:$1:6379 core@$2
     fi
 }
+
+lpsql() {
+    cd ~/code/rover-mediaos-env
+    TMPFILE=$(mktemp /tmp/PGPASS.XXXXX)
+    blackbox_cat $1/env-encrypted > $TMPFILE
+    cat $1/env-plaintext >> $TMPFILE
+    source $TMPFILE
+    rm $TMPFILE
+    echo "Logging into $DATABASE_HOST.."
+    PGPASSWORD=$DATABASE_PASSWORD psql -h $DATABASE_HOST -U $DATABASE_USER -n $DATABASE_NAME
+}
+    
