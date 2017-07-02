@@ -1,13 +1,19 @@
+#gpgclear=$(gpg-connect-agent reloadagent /bye > /dev/null)
 export WORKON_HOME=$HOME/.virtualenvs
 export PROJECT_HOME=$HOME/Devel
 source /usr/local/bin/virtualenvwrapper.sh
 export whoami=$(whoami)
+
+function parse_git_branch {
+    git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1) /'
+}
 
 atlasenv() {
 source /Users/$whoami/.virtualenvs/atlas-dev/bin/activate
 export ANSIBLE_VAULT_PASSWORD=$(gpg -d /Users/$whoami/.ansible/ansible_pwd.gpg)
 export VIRTUALENV=$(echo $VIRTUAL_ENV | sed 's:.*/::')
 PS1='\e[0;91m*** \e[0;91mDEIS=\e[0;93m$DEIS_PROFILE \e[0;91mAWS=\e[0;93m$AWS\e[0;91m***\e[m \e[0,92m($VIRTUALENV)\e[m
+$(parse_git_branch)
 $PWD> '
 }
 
@@ -15,17 +21,20 @@ devopstoolsenv() {
 source /Users/$whoami/.virtualenvs/devops_tools/bin/activate
 export VIRTUALENV=$(echo $VIRTUAL_ENV | sed 's:.*/::')
 PS1='\e[0;91m*** \e[0;91mDEIS=\e[0;93m$DEIS_PROFILE \e[0;91mAWS=\e[0;93m$AWS\e[0;91m***\e[m \e[0,92m($VIRTUALENV)\e[m
+$(parse_git_branch)
 $PWD> '
 }
 
 essexenv() {
 source /Users/$whoami/.virtualenvs/essex-dev/bin/activate
 export VIRTUALENV=$(echo $VIRTUAL_ENV | sed 's:.*/::')
-PS1='\e[0;91m***\e[0;91mAWS=\e[0;93m$AWS\e[0;91m***\e[m \e[0,92m($VIRTUALENV)\e[m
+PS1='\e[0;91m***\e[0;91mAWS=\e[0;93m$AWS\e[0;91m***\e[m \e[0,92m($VIRTUALENV)\e[m 
+$(parse_git_branch)
 $PWD> '
 }
 
 PS1='\e[0;91m*** \e[0;91mDEIS=\e[0;93m$DEIS_PROFILE \e[0;91mAWS=\e[0;93m$AWS\e[0;91m***\e[m
+$(parse_git_branch)
 $PWD> '
 
 complete -C '/usr/local/bin/aws_completer' aws
@@ -71,148 +80,121 @@ select opt in "${options[@]}" "Abort"; do
             set_aws ctgdev
             export DEIS_PROFILE=${options[0]}
             echo -e "\033[92m SSHKey: test-deis.pem"
-            osascript ~/tbg.scpt default
         else 
             export DEIS_PROFILE=${options[0]} 
             echo -e "\033[92m SSHKey: test-deis.pem"
-            osascript ~/tbg.scpt default
-        fi; break;;
+            fi; break;;
     2 ) if [[ $AWS != ctgmediaosprod ]]; then 
             echo -e $WARNING
             set_aws ctgmediaosprod
             export DEIS_PROFILE=${options[1]}
             echo -e "\033[92m SSHKey: ctstage-deis.pem"
-            osascript ~/tbg.scpt staging
         else 
             export DEIS_PROFILE=${options[1]} 
             echo -e "\033[92m SSHKey: ctstage-deis.pem"
-            osascript ~/tbg.scpt staging
-        fi; break;;
+            fi; break;;
     3 ) if [[ $AWS != ctgmediaosprod ]]; then 
             echo -e $WARNING
             set_aws ctgmediaosprod
             export DEIS_PROFILE=${options[2]}
             echo -e "\033[92m SSHKey: ctprod-deis.pem"
-            osascript ~/tbg.scpt production
         else 
             export DEIS_PROFILE=${options[2]} 
             echo -e "\033[92m SSHKey: ctprod-deis.pem"
-            osascript ~/tbg.scpt production
-        fi; break;;
+            fi; break;;
     4 ) if [[ $AWS != htvdev ]]; then 
             echo -e $WARNING
             set_aws htvdev
             export DEIS_PROFILE=${options[3]}
-            echo -e "\033[92m SSHKey: hearstdev.pem"
-            osascript ~/tbg.scpt default
         else 
             export DEIS_PROFILE=${options[3]}
             echo -e "\033[92m SSHKey: hearstdev.pem"
-            osascript ~/tbg.scpt default
-        fi; break;;
+            fi; break;;
     5 ) if [[ $AWS != htvmediaosprod ]]; then 
             echo -e $WARNING
             set_aws htvmediaosprod
             export DEIS_PROFILE=${options[4]}
             echo -e "\033[92m SSHKey: htvstage-deis.pem"
-            osascript ~/tbg.scpt staging
         else 
             export DEIS_PROFILE=${options[4]}
             echo -e "\033[92m SSHKey: htvstage-deis.pem"
-            osascript ~/tbg.scpt staging
-        fi; break;;
+            fi; break;;
     6 ) if [[ $AWS != htvmediaosprod ]]; then 
             echo -e $WARNING
             set_aws htvmediaosprod
             export DEIS_PROFILE=${options[5]}
             echo -e "\033[92m SSHKey: htvprod-deis.pem"
-            osascript ~/tbg.scpt production
         else 
             export DEIS_PROFILE=${options[5]}
             echo -e "\033[92m SSHKey: htvprod-deis.pem"
-            osascript ~/tbg.scpt production
-        fi; break;;
+            fi; break;;
     7 ) if [[ $AWS != mediaosdevstage ]]; then 
             echo -e $WARNING
             set_aws mediaosdevstage
             export DEIS_PROFILE=${options[6]}
             echo -e "\033[92m SSHKey: stage-deis-20160603.pem"
-            osascript ~/tbg.scpt staging
         else 
             export DEIS_PROFILE=${options[6]}
             echo -e "\033[92m SSHKey: stage-deis-20160603.pem"
-            osascript ~/tbg.scpt staging
-        fi; break;;
+            fi; break;;
     8 ) if [[ $AWS != hdm2prod ]]; then 
             echo -e $WARNING
             set_aws hdm2prod
             export DEIS_PROFILE=${options[7]}
             echo -e "\033[92m SSHKey: prod-deis-20160603.pem"
-            osascript ~/tbg.scpt production
         else 
             export DEIS_PROFILE=${options[7]}
             echo -e "\033[92m SSHKey: prod-deis-20160603.pem"
-            osascript ~/tbg.scpt production
-        fi; break;;
+            fi; break;;
     9 ) if [[ $AWS != htvdev ]]; then
             echo -e $WARNING
             set_aws htvdev
             export DEIS_PROFILE=${options[8]}
             echo -e "\033[92m SSHKey: htvfeature-deis.pem"
-            osascript ~/tbg.scpt default
         else
             export DEIS_PROFILE=${options[8]}
             echo -e "\033[92m SSHKey: htvfeature-deis.pem"
-            osascript ~/tbg.scpt default
-        fi; break;;
+            fi; break;;
 
      10 ) if [[ $AWS != htvmediaosprod ]]; then
             echo -e $WARNING
             set_aws htvmediaosprod
             export DEIS_PROFILE=${options[9]}
             echo -e "\033[92m SSHKey: htvload-deis.pem"
-            osascript ~/tbg.scpt staging
         else
             export DEIS_PROFILE=${options[9]}
             echo -e "\033[92m SSHKey: htvload-deis.pem"
-            osascript ~/tbg.scpt staging
-        fi; break;;
+            fi; break;;
 
      11 ) if [[ $AWS != mediaosdevstage ]]; then
             echo -e $WARNING
             set_aws mediaosdevstage
             export DEIS_PROFILE=${options[10]}
             echo -e "\033[92m SSHKey: loadtest-deis-20160603.pem"
-            osascript ~/tbg.scpt staging
         else
             export DEIS_PROFILE=${options[10]}
             echo -e "\033[92m SSHKey: loadtest-deis-20160603.pem"
-            osascript ~/tbg.scpt staging
-        fi; break;;
+            fi; break;;
 
      12 ) if [[ $AWS != mediaosdevstage ]]; then
             echo -e $WARNING
             set_aws mediaosdevstage
             export DEIS_PROFILE=${options[11]}
             echo -e "\033[92m SSHKey: feature-deis-20160603.pem"
-            osascript ~/tbg.scpt default
         else
             export DEIS_PROFILE=${options[11]}
             echo -e "\033[92m SSHKey: feature-deis-20160603.pem"
-            osascript ~/tbg.scpt default
-        fi; break;;
+            fi; break;;
         
      13 ) if [[ $AWS != htvmediaosprod ]]; then
              echo -e $WARNING
              set_aws htvmediaosprod
              export DEIS_PROFILE=${options[12]}
              echo -e "\033[92m SSHKey: htvload-deis.pem"
-            osascript ~/tbg.scpt staging
          else
              export DEIS_PROFILE=${options[12]}
              echo -e "\033[92m SSHKey: htvload-deis.pem"
-            osascript ~/tbg.scpt staging
-         fi; break;;
+             fi; break;;
 
     $(( ${#options[@]}+1 )) ) echo "Aborted!"; break;;
     *) echo "Invalid option. Try another one.";continue;;
@@ -309,16 +291,24 @@ listdns() {
 }
 
 listec2() {
-    aws ec2 describe-instances --filter "Name=tag-value,Values=$1" --query "Reservations[].Instances[].[InstanceId,PrivateIpAddress,Tags[?Key=='Name'].Value[]]"
+    if [[ $1 == *pgbouncer* ]]; then
+      aws ec2 describe-instances --filter "Name=tag-value,Values=$1" "Name=tag-value,Values=$2" --query "Reservations[].Instances[].[InstanceId,PrivateIpAddress,Tags[?Key=='Name'].Value[],Tags[?Key=='replica'].Value[]]"
+    else
+      aws ec2 describe-instances --filter "Name=tag-value,Values=$1" --query "Reservations[].Instances[].[InstanceId,PrivateIpAddress,Tags[?Key=='Name'].Value[]]"
+    fi
 }
 
 rssh() {
     ip=$(aws ec2 describe-instances --filter "Name=instance-id,Values=$1" --query "Reservations[].Instances[].[PrivateIpAddress]" --output text)
     tag=$(aws ec2 describe-instances --filter "Name=instance-id,Values=$1" --query "Reservations[].Instances[].[Tags[?Key=='Name'].Value[]]" --output text)
-    if [[ $tag == dev* ]]; then
+    if [[ $tag == test* ]]; then
+    ssh -F ~/.ssh/test-rover-config $ip 
+    elif [[ $tag == dev* ]]; then
     ssh -F ~/.ssh/dev-rover-config $ip
     elif [[ $tag == stage* ]]; then
     ssh -F ~/.ssh/stage-rover-config $ip
+    elif [[ $tag == load* ]]; then
+    ssh -F ~/.ssh/load-rover-config $ip
     elif [[ $tag == prod* ]]; then
     ssh -F ~/.ssh/prod-rover-config $ip
    fi
@@ -337,13 +327,35 @@ redistunnel() {
 }
 
 lpsql() {
-    cd ~/code/rover-mediaos-env
+    pushd ~/code/rover-mediaos-env
     TMPFILE=$(mktemp /tmp/PGPASS.XXXXX)
     blackbox_cat $1/env-encrypted > $TMPFILE
-    cat $1/env-plaintext >> $TMPFILE
+    cat $1/env-plaintext | grep DATABASE >> $TMPFILE
     source $TMPFILE
     rm $TMPFILE
-    echo "Logging into $DATABASE_HOST.."
+    echo -e "Logging into \033[0;91m$DATABASE_HOST..\033[0m"
+    export PGPASSWORD=$DATABASE_PASSWORD 
+    export PGHOST=$DATABASE_HOST
+    export PGUSER=$DATABASE_USER
+    export PGDATABASE=$DATABASE_NAME
+    psql 
+    popd
+    unset DATABASE_PASSWORD && unset DATABASE_HOST && unset DATABASE_USER && unset DATABASE_NAME && unset PGHOST && unset PGPASSWORD
+}
+   
+kms_decrypt() {
+docker run --rm -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY -e AWS_DEFAULT_REGION='us-east-1' quay.io/hearst/mediaos_devops_tools:develop /opt/golden_egg/bin/decrypt-blob -b "$1"
+} 
+
+getawsaccount(){
+    aws sts get-caller-identity --output text --query 'Account'
+}
+
+purge(){
+  key=$(gpg -d ~/htvfastly.gpg)
+  curl -X PURGE -H Fastly-Key:$key $1
+}
+
+postgres_psql() {
     PGPASSWORD=$DATABASE_PASSWORD psql -h $DATABASE_HOST -U $DATABASE_USER -n $DATABASE_NAME
 }
-    
