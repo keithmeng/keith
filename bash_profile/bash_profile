@@ -359,3 +359,7 @@ purge(){
 postgres_psql() {
     PGPASSWORD=$DATABASE_PASSWORD psql -h $DATABASE_HOST -U $DATABASE_USER -n $DATABASE_NAME
 }
+
+git_branch_cleanup() {
+    git branch --merged | egrep -v "(^\*|master|develop)" | xargs git branch -d
+}
