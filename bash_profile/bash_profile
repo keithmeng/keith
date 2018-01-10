@@ -1,4 +1,4 @@
-#gpgclear=$(gpg-connect-agent reloadagent /bye > /dev/null)
+gpgclear=$(gpg-connect-agent reloadagent /bye > /dev/null)
 export WORKON_HOME=$HOME/.virtualenvs
 export PROJECT_HOME=$HOME/Devel
 source /usr/local/bin/virtualenvwrapper.sh
@@ -27,8 +27,9 @@ $PWD> '
 
 essexenv() {
 source /Users/$whoami/.virtualenvs/essex-dev/bin/activate
+export ANSIBLE_VAULT_PASSWORD=$(gpg -d /Users/$whoami/.ansible/ansible_pwd.gpg)
 export VIRTUALENV=$(echo $VIRTUAL_ENV | sed 's:.*/::')
-PS1='\e[0;91m***\e[0;91mAWS=\e[0;93m$AWS\e[0;91m***\e[m \e[0,92m($VIRTUALENV)\e[m 
+PS1='\e[0;91m*** \e[0;91mK8s=\e[0;93m$K8S_PROFILE \e[0;91mAWS=\e[0;93m$AWS\e[0;91m***\e[m \e[0,92m($VIRTUALENV)\e[m
 $(parse_git_branch)
 $PWD> '
 }
@@ -45,6 +46,7 @@ alias git=hub
 alias kc-sys='kubectl --namespace=kube-system'
 
 set_aws() {
+    gpg-connect-agent reloadagent /bye > /dev/null
     pwd=$(gpg -d ~/.aws/${1}.gpg)
     export AWS_ACCESS_KEY_ID=$(echo $pwd | awk '{print $1}') 
     export AWS_SECRET_ACCESS_KEY=$(echo $pwd | awk '{print $2}') 
@@ -242,6 +244,47 @@ select opt in "${options[@]}" "Abort"; do
 done
 }
 
+kc() {
+  options=(
+  "kubefeature-one"
+  "kubestage-one"
+  "kubestage-two"
+  "kubeprod-one"
+)
+
+echo "Choose k8s profile"
+PS3="Input number for selection: "
+select opt in "${options[@]}" "Abort"; do
+
+    case "$REPLY" in
+    1 ) echo -e $WARNING
+        set_aws mediaosdevstage
+        kubectl config use-context ${options[0]}
+        export K8S_PROFILE=${options[0]}
+        break;;
+    2 ) echo -e $WARNING
+        set_aws mediaosdevstage
+        kubectl config use-context ${options[1]}
+        export K8S_PROFILE=${options[1]}
+        break;;
+    3 ) echo -e $WARNING
+        set_aws mediaosdevstage
+        kubectl config use-context ${options[2]}
+        export K8S_PROFILE=${options[2]}
+        break;;
+    4 ) echo -e $WARNING
+        set_aws hdm2prod
+        kubectl config use-context ${options[3]}
+        export K8S_PROFILE=${options[3]}
+        break;;
+            
+    $(( ${#options[@]}+1 )) ) echo "Aborted!"; break;;
+    *) echo "Invalid option. Try another one.";continue;;
+
+            esac
+
+        done
+}
 testaws() {
     aws cloudformation list-stacks --query StackSummaries[].[StackName] --output text
 }
@@ -333,6 +376,9 @@ lpsql() {
     cat $1/env-plaintext | grep DATABASE >> $TMPFILE
     source $TMPFILE
     rm $TMPFILE
+    if [[ $2 == 'romeo' ]]; then
+        export DATABASE_HOST="pdj9oclr960t66.cejfxcb6ujgx.us-east-1.rds.amazonaws.com"
+    fi
     echo -e "Logging into \033[0;91m$DATABASE_HOST..\033[0m"
     export PGPASSWORD=$DATABASE_PASSWORD 
     export PGHOST=$DATABASE_HOST
@@ -356,10 +402,21 @@ purge(){
   curl -X PURGE -H Fastly-Key:$key $1
 }
 
+purge_hdm(){
+  key=$(gpg -d ~/fastly-api.gpg)
+  curl -X PURGE -H Fastly-Key:$key $1
+}
+
 postgres_psql() {
     PGPASSWORD=$DATABASE_PASSWORD psql -h $DATABASE_HOST -U $DATABASE_USER -n $DATABASE_NAME
 }
 
 git_branch_cleanup() {
     git branch --merged | egrep -v "(^\*|master|develop)" | xargs git branch -d
+    git remote prune origin
+}
+
+copy-github-labels() {
+    GITHUB_TOKEN=$(gpg -d ~/github_token.gpg) 
+    copy-github-labels -t $GITHUB_TOKEN $1 $2
 }
