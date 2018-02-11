@@ -420,3 +420,9 @@ copy-github-labels() {
     GITHUB_TOKEN=$(gpg -d ~/github_token.gpg) 
     copy-github-labels -t $GITHUB_TOKEN $1 $2
 }
+
+ssh_canary(){
+    ip=$(aws ec2 describe-instances --filter "Name=tag-value,Values=$1-rover-canary" --query "Reservations[].Instances[].[PrivateIpAddress]" --output text)
+    echo "Connecting to $ip"
+    ssh -F ~/.ssh/$1-rover-config $ip
+} 
